@@ -1,22 +1,28 @@
-// 🔌 IMPORTANT: replace with your deployed URL
-const socket = io("https://facelink-production-3173.up.railway.app");
+const socket = io();
 
 let pc;
 let localStream;
 
 const statusText = document.getElementById("status");
 
+// ✅ TURN + STUN (IMPORTANT)
 const config = {
   iceServers: [
     { urls: "stun:stun.l.google.com:19302" },
     {
-      urls: "turn:YOUR_SERVER_IP:3478",
-      username: "user",
-      credential: "facelinksecret"
+      urls: "turn:openrelay.metered.ca:80",
+      username: "openrelayproject",
+      credential: "openrelayproject"
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443",
+      username: "openrelayproject",
+      credential: "openrelayproject"
     }
   ]
 };
 
+// 🎥 Start camera
 async function init() {
   localStream = await navigator.mediaDevices.getUserMedia({
     video: true,
@@ -27,19 +33,27 @@ async function init() {
   socket.emit("join");
 }
 
+// 🔗 Match
 socket.on("matched", async ({ initiator }) => {
   statusText.innerText = "Connected";
 
   pc = new RTCPeerConnection(config);
 
-  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+  localStream.getTracks().forEach(track => {
+    pc.addTrack(track, localStream);
+  });
 
-  pc.ontrack = e => remoteVideo.srcObject = e.streams[0];
-
-  pc.onicecandidate = e => {
-    if (e.candidate) socket.emit("ice-candidate", e.candidate);
+  pc.ontrack = (event) => {
+    remoteVideo.srcObject = event.streams[0];
   };
 
+  pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      socket.emit("ice-candidate", event.candidate);
+    }
+  };
+
+  // 🔥 FIX: only one creates offer
   if (initiator) {
     const offer = await pc.createOffer();
     await pc.setLocalDescription(offer);
@@ -47,12 +61,23 @@ socket.on("matched", async ({ initiator }) => {
   }
 });
 
+// 📥 Offer
 socket.on("offer", async (offer) => {
   pc = new RTCPeerConnection(config);
 
-  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
+  localStream.getTracks().forEach(track => {
+    pc.addTrack(track, localStream);
+  });
 
-  pc.ontrack = e => remoteVideo.srcObject = e.streams[0];
+  pc.ontrack = (event) => {
+    remoteVideo.srcObject = event.streams[0];
+  };
+
+  pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      socket.emit("ice-candidate", event.candidate);
+    }
+  };
 
   await pc.setRemoteDescription(offer);
 
@@ -62,18 +87,18 @@ socket.on("offer", async (offer) => {
   socket.emit("answer", answer);
 });
 
+// 📥 Answer
 socket.on("answer", async (answer) => {
   if (pc) await pc.setRemoteDescription(answer);
 });
 
-socket.on("ice-candidate", async (c) => {
+// 📥 ICE
+socket.on("ice-candidate", async (candidate) => {
   try {
-    if (pc) await pc.addIceCandidate(c);
-  } catch (e) {}
-});
-
-socket.on("chat", msg => {
-  messages.innerHTML += `<p class="stranger">${msg}</p>`;
+    if (pc) await pc.addIceCandidate(candidate);
+  } catch (e) {
+    console.error(e);
+  }
 });
 
 socket.on("partner-disconnected", () => {
@@ -81,15 +106,8 @@ socket.on("partner-disconnected", () => {
   location.reload();
 });
 
-function sendMessage() {
-  const msg = document.getElementById("msg").value;
-  socket.emit("chat", msg);
-  messages.innerHTML += `<p class="you">${msg}</p>`;
-  document.getElementById("msg").value = "";
-}
-
+// 🎛️ Controls
 function nextUser() {
-  socket.emit("next");
   location.reload();
 }
 
@@ -99,11 +117,6 @@ function toggleMute() {
 
 function toggleCamera() {
   localStream.getVideoTracks()[0].enabled ^= true;
-}
-
-function reportUser() {
-  socket.emit("report");
-  alert("User reported");
 }
 
 init();
