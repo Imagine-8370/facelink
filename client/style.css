@@ -1,4 +1,199 @@
+/* RESET */
 * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background: black;
+  overflow: hidden;
+  color: white;
+}
+
+/* 🌐 REMOTE VIDEO (FULLSCREEN) */
+#remoteVideo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 🍏 LOCAL CAMERA (GLASS CARD) */
+#localVideo {
+  position: fixed;
+  bottom: 110px;
+  right: 15px;
+
+  width: 130px;
+  height: 170px;
+
+  object-fit: cover;
+  border-radius: 22px;
+
+  background: #111;
+
+  outline: 2px solid rgba(255,255,255,0.15);
+
+  box-shadow:
+    0 10px 30px rgba(0,0,0,0.6),
+    inset 0 0 10px rgba(255,255,255,0.05);
+
+  transform: scale(0.9);
+  opacity: 0;
+  transition: all 0.4s ease;
+
+  z-index: 10;
+}
+
+#localVideo.show {
+  transform: scale(1);
+  opacity: 1;
+  animation: floatCam 4s ease-in-out infinite;
+}
+
+/* 🌊 FLOAT ANIMATION */
+@keyframes floatCam {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0px); }
+}
+
+/* 💎 GLASS UI */
+.glass {
+  background: rgba(20,20,20,0.85);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+/* 📱 MOBILE FIX (NO GLITCH) */
+@media (max-width: 768px) {
+  .glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(15,15,15,0.95);
+  }
+}
+
+/* 🧠 TOP BAR */
+.top-bar {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  right: 15px;
+
+  padding: 12px 16px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 15px;
+  font-weight: 500;
+
+  z-index: 20;
+}
+
+/* 🔥 LOGO */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.logo img {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+
+.logo span {
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+/* 📡 STATUS TEXT */
+#status {
+  opacity: 0.8;
+  font-size: 13px;
+}
+
+/* 🎛 CONTROLS */
+.controls {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  gap: 18px;
+
+  padding: 10px 14px;
+
+  z-index: 20;
+}
+
+/* 🎯 BUTTONS */
+.controls button {
+  width: 65px;
+  height: 65px;
+
+  border-radius: 50%;
+  border: none;
+
+  font-size: 22px;
+
+  background: rgba(50,50,50,0.9);
+  color: white;
+
+  transition: all 0.2s ease;
+}
+
+/* ✨ BUTTON PRESS */
+.controls button:active {
+  transform: scale(0.85);
+  background: rgba(80,80,80,1);
+}
+
+/* 🔴 NEXT BUTTON */
+.danger {
+  background: #ff3b30;
+}
+
+/* 💻 DESKTOP ENHANCEMENTS */
+@media (min-width: 900px) {
+  #localVideo {
+    width: 150px;
+    height: 200px;
+  }
+
+  .controls button {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* 📱 SMALL MOBILE */
+@media (max-width: 480px) {
+  #localVideo {
+    width: 110px;
+    height: 150px;
+  }
+
+  .controls button {
+    width: 70px;
+    height: 70px;
+    font-size: 24px;
+  }
+}* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
