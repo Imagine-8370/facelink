@@ -31,8 +31,8 @@ async function init() {
     localVideo.classList.add("show");
 
     socket.emit("join");
-  } catch (err) {
-    alert("Camera permission required");
+  } catch {
+    alert("Allow camera & mic");
   }
 }
 
@@ -55,14 +55,12 @@ function createPeer() {
     pc.addTrack(track, localStream);
   });
 
-  pc.ontrack = (event) => {
-    remoteVideo.srcObject = event.streams[0];
+  pc.ontrack = (e) => {
+    remoteVideo.srcObject = e.streams[0];
   };
 
-  pc.onicecandidate = (event) => {
-    if (event.candidate) {
-      socket.emit("ice-candidate", event.candidate);
-    }
+  pc.onicecandidate = (e) => {
+    if (e.candidate) socket.emit("ice-candidate", e.candidate);
   };
 }
 
@@ -85,9 +83,7 @@ socket.on("ice-candidate", async (candidate) => {
   if (pc) await pc.addIceCandidate(candidate);
 });
 
-socket.on("partner-disconnected", () => {
-  location.reload();
-});
+socket.on("partner-disconnected", () => location.reload());
 
 function nextUser() {
   location.reload();
