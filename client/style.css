@@ -20,7 +20,7 @@ body {
   object-fit: cover;
 }
 
-/* 🍏 iOS GLASS CAMERA CARD */
+/* 🍏 CAMERA CARD */
 #localVideo {
   position: fixed;
   bottom: 110px;
@@ -30,28 +30,22 @@ body {
   height: 170px;
 
   object-fit: cover;
-  border-radius: 22px;
+  border-radius: 20px;
 
-  background: rgba(255,255,255,0.08);
-  backdrop-filter: blur(20px);
+  background: #111;
 
-  border: 1px solid rgba(255,255,255,0.25);
+  outline: 2px solid rgba(255,255,255,0.15);
 
-  box-shadow:
-    0 10px 30px rgba(0,0,0,0.6),
-    inset 0 0 10px rgba(255,255,255,0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.6);
 
   transform: scale(0.9);
   opacity: 0;
   transition: all 0.4s ease;
-
-  z-index: 10;
 }
 
 #localVideo.show {
   transform: scale(1);
   opacity: 1;
-  animation: floatCam 4s ease-in-out infinite;
 }
 
 /* 🌊 FLOAT */
@@ -61,11 +55,27 @@ body {
   100% { transform: translateY(0px); }
 }
 
-/* GLASS UI */
+#localVideo.show {
+  animation: floatCam 4s ease-in-out infinite;
+}
+
+/* 💎 GLASS (SAFE) */
 .glass {
-  backdrop-filter: blur(20px);
-  background: rgba(255,255,255,0.08);
+  background: rgba(20,20,20,0.85);
   border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+/* 📱 MOBILE FIX (REMOVE BLUR = NO GLITCH) */
+@media (max-width: 768px) {
+  .glass {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background: rgba(20,20,20,0.95);
+  }
 }
 
 /* TOP BAR */
@@ -90,13 +100,14 @@ body {
   gap: 15px;
 }
 
+/* BUTTONS */
 .controls button {
   width: 60px;
   height: 60px;
   border-radius: 50%;
   border: none;
   font-size: 20px;
-  background: rgba(255,255,255,0.15);
+  background: rgba(50,50,50,0.9);
   color: white;
 }
 
