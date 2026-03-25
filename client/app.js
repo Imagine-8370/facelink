@@ -1,4 +1,3 @@
-// 🔥 ONLY ONE SOCKET — DO NOT DUPLICATE
 const socket = io(window.location.origin, {
   transports: ["websocket"]
 });
@@ -21,7 +20,6 @@ const config = {
   ]
 };
 
-// 🎥 INIT
 async function init() {
   try {
     localStream = await navigator.mediaDevices.getUserMedia({
@@ -32,19 +30,13 @@ async function init() {
     localVideo.srcObject = localStream;
     localVideo.classList.add("show");
 
-    console.log("Camera OK");
-
     socket.emit("join");
   } catch (err) {
-    alert("Camera permission needed");
-    console.error(err);
+    alert("Camera permission required");
   }
 }
 
-// 🔗 MATCH
 socket.on("matched", async ({ initiator }) => {
-  console.log("Matched");
-
   statusText.innerText = "Connected";
 
   createPeer();
@@ -56,7 +48,6 @@ socket.on("matched", async ({ initiator }) => {
   }
 });
 
-// 🧠 PEER
 function createPeer() {
   pc = new RTCPeerConnection(config);
 
@@ -65,9 +56,7 @@ function createPeer() {
   });
 
   pc.ontrack = (event) => {
-    console.log("Stream received");
     remoteVideo.srcObject = event.streams[0];
-    remoteVideo.classList.add("show");
   };
 
   pc.onicecandidate = (event) => {
@@ -77,7 +66,6 @@ function createPeer() {
   };
 }
 
-// 📥 OFFER
 socket.on("offer", async (offer) => {
   createPeer();
 
@@ -89,39 +77,28 @@ socket.on("offer", async (offer) => {
   socket.emit("answer", answer);
 });
 
-// 📥 ANSWER
 socket.on("answer", async (answer) => {
   if (pc) await pc.setRemoteDescription(answer);
 });
 
-// 📥 ICE
 socket.on("ice-candidate", async (candidate) => {
-  try {
-    if (pc) await pc.addIceCandidate(candidate);
-  } catch (e) {
-    console.error(e);
-  }
+  if (pc) await pc.addIceCandidate(candidate);
 });
 
-// 🔄 DISCONNECT
 socket.on("partner-disconnected", () => {
-  statusText.innerText = "Disconnected";
   location.reload();
 });
 
-// 🎛️ CONTROLS
 function nextUser() {
   location.reload();
 }
 
 function toggleMute() {
-  if (localStream)
-    localStream.getAudioTracks()[0].enabled ^= true;
+  localStream.getAudioTracks()[0].enabled ^= true;
 }
 
 function toggleCamera() {
-  if (localStream)
-    localStream.getVideoTracks()[0].enabled ^= true;
+  localStream.getVideoTracks()[0].enabled ^= true;
 }
 
 init();
