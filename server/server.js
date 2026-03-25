@@ -1,4 +1,105 @@
+// ✅ IMPORTS (ONLY ONCE — IMPORTANT)
 const express = require("express");
+const http = require("http");
+const cors = require("cors");
+const path = require("path");
+const { Server } = require("socket.io");
+
+// ✅ APP SETUP
+const app = express();
+app.use(cors());
+app.use(express.static(path.join(__dirname, "../client")));
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
+
+// ✅ USER QUEUE
+let queue = new Set();
+
+// 🔗 MATCH USERS (NO GLARE ISSUE)
+function matchUsers() {
+  const users = Array.from(queue);
+
+  while (users.length >= 2) {
+    const a = users.shift();
+    const b = users.shift();
+
+    queue.delete(a);
+    queue.delete(b);
+
+    a.partner = b;
+    b.partner = a;
+
+    // one initiator only (important)
+    a.emit("matched", { initiator: true });
+    b.emit("matched", { initiator: false });
+  }
+}
+
+// 🔌 SOCKET CONNECTION
+io.on("connection", (socket) => {
+  console.log("User connected:", socket.id);
+
+  // join queue
+  socket.on("join", () => {
+    queue.add(socket);
+    matchUsers();
+  });
+
+  // signaling
+  socket.on("offer", (data) => {
+    if (socket.partner) socket.partner.emit("offer", data);
+  });
+
+  socket.on("answer", (data) => {
+    if (socket.partner) socket.partner.emit("answer", data);
+  });
+
+  socket.on("ice-candidate", (data) => {
+    if (socket.partner) socket.partner.emit("ice-candidate", data);
+  });
+
+  // next user (skip)
+  socket.on("next", () => {
+    if (socket.partner) {
+      socket.partner.partner = null;
+      socket.partner.emit("partner-disconnected");
+    }
+
+    socket.partner = null;
+    queue.add(socket);
+    matchUsers();
+  });
+
+  // disconnect
+  socket.on("disconnect", () => {
+    console.log("User disconnected:", socket.id);
+
+    queue.delete(socket);
+
+    if (socket.partner) {
+      socket.partner.partner = null;
+      socket.partner.emit("partner-disconnected");
+    }
+  });
+});
+
+// 🌐 HEALTH CHECK (useful for deployment)
+app.get("/health", (req, res) => {
+  res.send("OK");
+});
+
+// 🚀 START SERVER
+const PORT = process.env.PORT || 3000;
+
+server.listen(PORT, () => {
+  console.log(`🚀 Facelink server running on port ${PORT}`);
+});const express = require("express");
 const http = require("http");
 const cors = require("cors");
 const path = require("path");
