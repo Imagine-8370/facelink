@@ -1,5 +1,5 @@
 // 🔌 IMPORTANT: replace with your deployed URL
-const socket = io();
+const socket = io("https://facelink-production-3173.up.railway.app");
 
 let pc;
 let localStream;
