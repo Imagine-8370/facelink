@@ -10,18 +10,22 @@
 
 <body>
 
-<video id="remoteVideo" autoplay playsinline></video>
-<video id="localVideo" autoplay muted playsinline></video>
+<div class="app">
 
-<div class="top-bar glass">
-  <span>Facelink</span>
-  <span id="status">Connecting...</span>
-</div>
+  <video id="remoteVideo" autoplay playsinline></video>
+  <video id="localVideo" autoplay muted playsinline></video>
 
-<div class="controls glass">
-  <button onclick="toggleMute()">🎤</button>
-  <button onclick="toggleCamera()">📷</button>
-  <button onclick="nextUser()" class="danger">⏭</button>
+  <div class="top-bar glass">
+    <span>Facelink</span>
+    <span id="status">Connecting...</span>
+  </div>
+
+  <div class="controls glass">
+    <button onclick="toggleMute()">🎤</button>
+    <button onclick="toggleCamera()">📷</button>
+    <button onclick="nextUser()" class="danger">⏭</button>
+  </div>
+
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
