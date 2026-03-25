@@ -1,0 +1,66 @@
+body {
+  margin: 0;
+  background: #0d0d0d;
+  color: white;
+  font-family: sans-serif;
+}
+
+.video-container {
+  position: relative;
+  height: 70vh;
+}
+
+#remoteVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+#localVideo {
+  position: absolute;
+  bottom: 80px;
+  right: 10px;
+  width: 110px;
+  border-radius: 12px;
+  border: 2px solid white;
+}
+
+.top-bar {
+  position: absolute;
+  top: 10px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.controls {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.btn {
+  padding: 14px;
+  border-radius: 50%;
+  border: none;
+}
+
+.danger { background: red; }
+.warning { background: orange; }
+
+.chat {
+  height: 30vh;
+  background: #121212;
+}
+
+#messages {
+  height: 70%;
+  overflow-y: auto;
+  padding: 10px;
+}
+
+.you { background: #007aff; padding: 6px; }
+.stranger { background: #333; padding: 6px; }

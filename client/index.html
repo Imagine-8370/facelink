@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Facelink</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="video-container">
+    <video id="remoteVideo" autoplay playsinline></video>
+    <video id="localVideo" autoplay muted playsinline></video>
+
+    <div class="top-bar">
+      <span>Facelink</span>
+      <span id="status">Connecting...</span>
+    </div>
+
+    <div class="controls">
+      <button class="btn danger" onclick="nextUser()">
+        <i data-lucide="skip-forward"></i>
+      </button>
+      <button class="btn" onclick="toggleMute()">
+        <i data-lucide="mic"></i>
+      </button>
+      <button class="btn" onclick="toggleCamera()">
+        <i data-lucide="video"></i>
+      </button>
+      <button class="btn warning" onclick="reportUser()">
+        <i data-lucide="flag"></i>
+      </button>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div id="messages"></div>
+    <div class="chat-input">
+      <input id="msg" placeholder="Message..." />
+      <button onclick="sendMessage()">
+        <i data-lucide="send"></i>
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="app.js"></script>
+<script>lucide.createIcons();</script>
+
+</body>
+</html>
